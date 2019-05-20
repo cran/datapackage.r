@@ -654,3 +654,16 @@ test_that('commit', {
   expect_true(resource$tabular)
   expect_equal(resource$profile$name, "tabular-data-resource")
 })
+
+###################################################
+testthat::context("Package #save")
+###################################################
+
+test_that("general", {
+  descriptor <- '{"resources": [{"name": "name", "data": ["data"]}]}'
+  dataResource <- Resource.load(descriptor)
+  temp.dir <- tempdir()
+  dataResource$save(temp.dir)
+  expect_true(file.exists(
+    stringr::str_c(temp.dir, "resource.json", sep = "/")))
+})

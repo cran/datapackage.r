@@ -545,6 +545,19 @@ test_that('remove non existent', {
   expect_length(dataPackage$descriptor$resources, 1)
 })
 
+###################################################
+testthat::context("Package #save")
+###################################################
+
+test_that("general", {
+  descriptor <- '{"resources": [{"name": "name", "data": ["data"]}]}'
+  dataPackage <- Package.load(descriptor)
+  temp.dir <- tempdir()
+  dataPackage$save(temp.dir)
+  
+  expect_true(file.exists(
+    stringr::str_c(temp.dir, "package.json", sep = "/")))
+})
 
 ###################################################
 testthat::context("Package #commit")

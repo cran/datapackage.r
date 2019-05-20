@@ -31,48 +31,79 @@ descriptor2 <- '{"resources": [{"name": "name", "data": ["data"]}]}'
 dataPackage2 <- Package.load(descriptor2)
 dataPackage2$descriptor
 
-
 # Expand Resource Descriptor
 descriptor3 <- helpers.from.json.to.list('{"resources": 
-                                         [{"name": "name",
-                                          "data": ["data"]}]}')
+                                         [{
+                                          "name": "name",
+                                          "data": ["data"]
+                                          }]
+                                        }')
+
 dataPackage3 <- Package.load(descriptor3)
 dataPackage3$descriptor
 
 
+# Expand Tabular Resource Schema
+descriptor4 <- helpers.from.json.to.list('{
+                                      "resources": [{
+                                        "name": "name",
+                                        "data": ["data"],
+                                        "profile": "tabular-data-resource",
+                                        "schema": {
+                                          "fields": [{
+                                            "name": "name"
+                                          }]
+                                        }
+                                      }]
+                                      }')
+
+dataPackage4 <- Package.load(descriptor4)
+dataPackage4$descriptor
+
+
+# Expand Tabular Resource Dialect
+descriptor5 <- helpers.from.json.to.list('{
+                                         "resources": [{
+                                           "name": "name",
+                                           "data": ["data"],
+                                           "profile": "tabular-data-resource",
+                                           "dialect": {
+                                             "delimiter": "custom"
+                                             }
+                                           }]
+                                         }')
+
+dataPackage5 <- Package.load(descriptor5)
+dataPackage5$descriptor
+
+
 # Add, Get and Remove Package Resources
-descriptor4 <- helpers.from.json.to.list(
+descriptor6 <- helpers.from.json.to.list(
        system.file('extdata/dp1/datapackage.json', 
                      package = "datapackage.r"))
-dataPackage4 <- Package.load(descriptor4)
-resource4 <- dataPackage4$addResource(
+dataPackage6 <- Package.load(descriptor6)
+resource6 <- dataPackage6$addResource(
         helpers.from.json.to.list('{"name": "name", "data": ["test"]}'))
-dataPackage4$resources[[2]]$source
-
-
+dataPackage6$resources[[2]]$source
 # Get resource
-dataPackage4$getResource('name')
-
-
+dataPackage6$getResource('name')
 # Remove resource
-dataPackage4$removeResource('name')
-dataPackage4$getResource('name')
+dataPackage6$removeResource('name')
+dataPackage6$getResource('name')
+
 
 
 # Modify and Commit Data Package
-descriptor5 <- helpers.from.json.to.list(
+descriptor7 <- helpers.from.json.to.list(
         '{"resources": [{"name": "name", "data": ["data"]}]}')
-dataPackage5 <- Package.load(descriptor5)
-dataPackage5$descriptor$resources[[1]]$name <- 'modified'
-
-
+dataPackage7 <- Package.load(descriptor7)
+dataPackage7$descriptor$resources[[1]]$name <- 'modified'
 ## Name did not modified.
-dataPackage5$resources[[1]]$name
-
-
+dataPackage7$resources[[1]]$name
 ## Should commit the changes
-dataPackage5$commit() # TRUE - successful commit 
-dataPackage5$resources[[1]]$name
+dataPackage7$commit() # TRUE - successful commit 
+
+dataPackage7$resources[[1]]$name
 
 }
 \seealso{

@@ -77,6 +77,36 @@ descriptor8 <- '{
 resource8 <- Resource.load(descriptor8)
 resource8$source 
 
+
+# Inline Table Resource
+descriptor9 <- '{
+               "name": "example",
+               "profile": "tabular-data-resource",
+               "data": [
+                  ["height", "age", "name"],
+                  ["180", "18", "Tony"],
+                  ["192", "32", "Jacob"]
+                 ],
+               "schema": {
+                 "fields": [{
+                   "name": "height",
+                   "type": "integer"
+                   },
+                 {
+                   "name": "age",
+                   "type": "integer"
+                 },
+                 {
+                   "name": "name",
+                   "type": "string"
+                 }
+                 ]
+                }
+               }'
+resource9 <- Resource.load(descriptor9)
+table <- resource9$table$read()
+table
+
 }
 \seealso{
 \code{\link{Resource}}, \href{https://frictionlessdata.io/specs/data-resource/}{Data Resource Specifications}

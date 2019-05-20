@@ -1,6 +1,12 @@
 NEWS
 ================
 
+#### datapackage.r v1.1
+
+Update profiles
+
+-----
+
 #### datapackage.r v1.0
 
 The library based on the Frictionless Data specs v1 -

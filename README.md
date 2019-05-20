@@ -123,7 +123,7 @@ dataPackage
     ##     save: function (target, type = "json") 
     ##     valid: active binding
     ##   Private:
-    ##     basePath_: C:/Users/akis/Desktop/datapackage-r
+    ##     basePath_: C:/Users/akis_/Documents/datapackage-r
     ##     build_: function () 
     ##     currentDescriptor_: list
     ##     currentDescriptor_json: NULL
@@ -351,8 +351,7 @@ dataPackage$valid
 
     ## [1] TRUE
 
-Because our resources are tabular we could read it as a tabular
-data:
+Because our resources are tabular we could read it as a tabular data:
 
 ``` r
 jsonlite::toJSON(dataPackage$getResource("population")$read(keyed = TRUE),auto_unbox = FALSE,pretty = TRUE)
@@ -834,8 +833,7 @@ It returns `Schema` instance to interact with data schema. Read API
 documentation -
 [tableschema.Schema](https://github.com/frictionlessdata/tableschema-js#schema).
 
-  - `(tableschema$Schema)` - returns schema class
-instance
+  - `(tableschema$Schema)` - returns schema class instance
 
 #### `resource$iter(keyed, extended, cast=TRUE, relations=FALSE, stream=FALSE)`
 
@@ -1130,8 +1128,7 @@ teams$checkRelations()
 
 As we could see there is a foreign key violation. That’s because our
 lookup table `cities` doesn’t have a city of `Munich` but we have a team
-from there. We need to fix it in `cities`
-resource:
+from there. We need to fix it in `cities` resource:
 
 ``` r
 package$descriptor$resources[[2]]$data <- rlist::list.append(package$descriptor$resources[[2]]$data, list('Munich', 'Germany'))
@@ -1153,8 +1150,7 @@ teams$checkRelations()
 
 Fixed\! But not only a check operation is available. We could use
 `relations` argument for `resource$iter/read` methods to dereference a
-resource
-relations:
+resource relations:
 
 ``` r
 jsonlite::toJSON(teams$read(keyed = TRUE, relations = FALSE), pretty =  TRUE)
@@ -1218,8 +1214,7 @@ The project follows the [Open Knowledge International coding
 standards](https://github.com/okfn/coding-standards). There are common
 commands to work with the project.Recommended way to get started is to
 create, activate and load the package environment. To install package
-and development dependencies into active
-environment:
+and development dependencies into active environment:
 
 ``` r
 devtools::install_github("frictionlessdata/datapackage-r", dependencies=TRUE)
