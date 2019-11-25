@@ -1,9 +1,15 @@
 NEWS
 ================
 
+#### datapackage.r v1.2
+
+add Makefile, LEAD.md files to buildignore
+
+-----
+
 #### datapackage.r v1.1
 
-Update profiles
+keep profiles up to date - <https://frictionlessdata.io/specs/profiles/>
 
 -----
 

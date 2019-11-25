@@ -1,4 +1,4 @@
-Frictionless Data Package
+Frictionless Data Data Package
 ================
 
 # Description
@@ -123,7 +123,7 @@ dataPackage
     ##     save: function (target, type = "json") 
     ##     valid: active binding
     ##   Private:
-    ##     basePath_: C:/Users/akis_/Documents/datapackage-r
+    ##     basePath_: C:/Users/kleanthis-okfngr/Documents/datapackage-r
     ##     build_: function () 
     ##     currentDescriptor_: list
     ##     currentDescriptor_json: NULL
