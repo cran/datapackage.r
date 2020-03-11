@@ -1,4 +1,4 @@
-Frictionless Data Data Package
+Frictionless Data - Data Package
 ================
 
 # Description
@@ -1236,7 +1236,3 @@ devtools::test()
 
 more detailed information about how to create and run tests you can find
 in [testthat package](https://github.com/hadley/testthat)
-
-# Github
-
-  - <https://github.com/frictionlessdata/datapackage-r>

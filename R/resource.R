@@ -377,7 +377,7 @@ Resource <- R6Class(
       private$nextDescriptor_ <- private$currentDescriptor_
       # Inspect source
       
-      private$sourceInspection_ <- inspectSource( private$currentDescriptor_$data,
+      private$sourceInspection_ <- inspectSource(private$currentDescriptor_$data,
                                                  as.character(private$currentDescriptor_$path),
                                                  private$basePath_
       )
@@ -409,7 +409,7 @@ Resource <- R6Class(
     },
     
     getTable_ = function() {
-      if (!isTRUE(!is.null(private$table_))) {        
+      if (isTRUE(is.null(private$table_))) {        
         # Resource -> Regular
         if (!isTRUE(self$tabular)) {
           return(NULL)
@@ -421,6 +421,36 @@ Resource <- R6Class(
         }
         # Resource -> Tabular
         
+        options <- list()
+        descriptor <- private$currentDescriptor_
+        options$format <- if(!is.null(descriptor$format)) descriptor$format else "csv"
+        options$encoding <- descriptor$encoding
+        dialect <- descriptor$dialect
+        
+        if (!is.null(dialect)) {
+          
+          if (dialect$header == FALSE || config::get("DEFAULT_DIALECT", file = system.file("config/config.yaml", package = "datapackage.r"))$header == FALSE) {
+            
+            # fields_ <- if(!is.null(descriptor$schema)) descriptor$schema$fields else list()
+            fields <- if(!is.null(descriptor$schema$fields)) descriptor$schema$fields else list()
+            
+            options$headers <- if(isTRUE(length(fields)>0)) {
+              
+              purrr::map(fields, names)
+              
+              } else NULL
+          }
+          validateDialect(dialect)
+          
+          for (key in names(DIALECT_KEYS)) {
+            if (!is.null(dialect[key])) {
+              options[tolower(key)] <- dialect[key]
+            }
+          }
+        }
+        
+        
+        
         schemaDescriptor <- private$currentDescriptor_$schema
         
         schema <- if (isTRUE(!is.null(schemaDescriptor))) tableschema.r::Schema.load(helpers.from.list.to.json(schemaDescriptor)) else NULL
@@ -429,7 +459,7 @@ Resource <- R6Class(
           schema <- future::value(schema)
         }
         
-        table_ <- tableschema.r::Table.load( self$source, schema = schema)
+        table_ <- tableschema.r::Table.load(self$source, schema = schema)
         private$table_ <- future::value(table_)
       }
       
@@ -438,6 +468,7 @@ Resource <- R6Class(
     },
     
     getRelations_ = function() {
+      
       
       if (isTRUE(private$relations_ == FALSE) || is.null(private$relations_)) {
         # Prepare resources

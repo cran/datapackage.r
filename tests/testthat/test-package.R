@@ -209,7 +209,7 @@ test_that('pointer bad', {
 
 
 test_that('remote', {
-  descriptor <- '{
+  descriptor <- helpers.from.json.to.list('{
                   "resources": [{
                     "name": "name1",
                     "data": ["data"],
@@ -221,56 +221,55 @@ test_that('remote', {
                     "dialect": "http://example.com/dialect"
                   }
                   ]
-                }'
+                }')
   
-  dataPackage <-  with_mock(
-    `curl::curl` = function(url, ...) {
-      if (url == "http://example.com/schema") {
-        httptest::fake_response(
-          httr::GET("http://example.com/schema"),
-          status_code = 200,
-          content = list(fields = list(list(name = "name")))
-        )
-      }
-      else if (url == "http://example.com/dialect") {
-        httptest::fake_response(
-          httr::GET("http://example.com/dialect"),
-          status_code = 200,
-          content = list(delimiter = ",")
-        )
-      }
-    },
-    Package.load(descriptor)
+  schema <-  testthat::with_mock(
+    httptest::fake_response(
+      httr::GET("http://example.com/schema"),
+      status_code = 200,
+      content = rlist::list.serialize(list(fields = list(list(name = "name"))),"inst/extdata/list.json")
+    ),
+    `httptest::request_happened` = expect_message,
+    
+    .env = eval.parent(Package.load(descriptor))
   )
+  descriptor$resources[[1]]$schema <- content(schema)
   
-  expect_equal(dataPackage$descriptor$resources,  purrr::map(list(
+  dialect <-  testthat::with_mock(
+    httptest::fake_response(
+      httr::GET("http://example.com/dialect"),
+      status_code = 200,
+      content = rlist::list.serialize(list(delimiter = ","),"inst/extdata/listdelim.json")
+    ),
+    `httptest::request_happened` = expect_message,
+    .env = eval.parent(Package.load(descriptor))
+  )
+  descriptor$resources[[2]]$dialect <- content(dialect)
+  
+  dataPackage <- Package.load(descriptor)
+  resources = list(
     list(name = 'name1', data = list('data'), schema = list(fields = list(list(name = 'name')))),
     list(name = 'name2', data = list('data'), dialect = list(delimiter = ',')
-    )), expandResourceDescriptor))
+    ))
+  expect_equal(dataPackage$descriptor$resources,  purrr::map(resources, expandResourceDescriptor))
 })
 
 
 test_that('remote bad', {
-  descriptor <- '{
+  descriptor <- helpers.from.json.to.list('{
                   "resources": [{
                     "name": "name1",
                     "data": ["data"],
                     "schema": "http://example.com/schema"
                   }]
-                }'
+                }')
   
   expect_error(
     with_mock(
-      `curl::curl` = function(url, ...) {
-        if (url == "http://example.com/schema") {
-          stop('Could not resolve host')
-          
-        }
-        
-      },
-      Package.load(descriptor)
-    ),
-    'Not resolved Remote URI')
+          stop('Could not resolve host'),
+          `httptest::request_happened` = expect_message,
+          .env = Package.load(descriptor)
+    ), 'Could not resolve host')
 })
 
 
@@ -410,7 +409,6 @@ test_that('tabular resource dialect', {
                                        				"doubleQuote": true,
                                        				"lineTerminator": "\\r\\n",
                                        				"quoteChar": "\\"",
-                                       				"escapeChar": "\\\\",
                                        				"skipInitialSpace": true,
                                        				"header": true,
                                        				"caseSensitiveHeader": false
@@ -647,8 +645,8 @@ test_that('should read rows if single field foreign keys is valid', {
   expect_equal(rows, list(
     list('1', list(firstname = 'Alex', surname = 'Martin'), 'Martin', NULL),
     list('2', list(firstname = 'John', surname = 'Dockins'), 'Dockins', '1'),
-    list('3', list(firstname = 'Walter', surname = 'White'), 'White', '2')
-  ))
+    list('3', list(firstname = 'Walter', surname = 'White'), 'White', '2'))
+  )
 })
 
 

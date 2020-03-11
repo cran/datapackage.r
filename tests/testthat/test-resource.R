@@ -160,17 +160,18 @@ test_that('pointer bad', {
 test_that('remote', {
   descriptor <- helpers.from.json.to.list('{"name": "name", "data": "data", "schema": "http://example.com/schema"}')
   
-  resource <- testthat::with_mock(
-    `curl:::curl` = function(txt, handle) {
+  schema <- testthat::with_mock(
       httptest::fake_response(
-        httr::GET(descriptor$schema),
+        request = httr::GET(descriptor$schema),
         status_code = 200,
-        content = list(fields = list(list(name = "name")))
-      )
-    },
+        content = rlist::list.serialize(list(fields = list(list(name = "name"))),"inst/extdata/list.json")
+      ), 
     `httptest::request_happened` = expect_message,
-    eval.parent(Resource.load(descriptor))
+  .env = eval.parent(Resource.load(descriptor))
   )
+  descriptor$schema <- content(schema)
+  
+  resource <- Resource.load(descriptor)
   expect_equal(resource$descriptor,
                expandResourceDescriptor(descriptor = list(
                  name = 'name',
@@ -188,12 +189,10 @@ test_that('remote bad', {
 }')
   
   expect_error(with_mock(
-    `curl:::curl` = function(txt, handle) {
-      stop('Could not resolve host')
-    },
+      stop('Could not resolve host'),
     `httptest::request_happened` = expect_message,
-    eval.parent(Resource.load(descriptor))
-  ), 'Not resolved Remote URI')
+  .env =eval.parent(Resource.load(descriptor))
+  ), 'Could not resolve host')
   
   
 })
@@ -288,18 +287,92 @@ test_that('tabular resource dialect', {
       doubleQuote = TRUE,
       lineTerminator = '\r\n',
       quoteChar = '"',
-      escapeChar = '\\',
+      # escapeChar = '\\',
       skipInitialSpace = TRUE,
       header = TRUE,
       caseSensitiveHeader = FALSE
-    ),
-    encoding = 'utf-8'
-    
-  ))
+    ),    encoding = 'utf-8'
+  )
+  
+  )
 })
 
 
 
+test_that('tabular resource dialect updates quoteChar when given', {
+  descriptor <- helpers.from.json.to.list('{
+     "name": "name",
+     "data": "data",
+     "profile": "tabular-data-resource",
+     "dialect": {
+       "delimiter": "custom",
+       "quoteChar": "+"
+     }
+   }')
+  resource <- Resource.load(descriptor)
+  expect_equivalent(resource$descriptor, list(
+    name = 'name',
+    data = 'data',
+    profile = 'tabular-data-resource',
+    dialect = list(
+      delimiter = 'custom',
+      quoteChar = '+',
+      doubleQuote = TRUE,
+      lineTerminator = '\r\n',
+      skipInitialSpace = TRUE,
+      header = TRUE,
+      caseSensitiveHeader = FALSE
+    ),    encoding = 'utf-8'
+  )
+  
+  )
+})
+
+
+test_that('tabular resource dialect does not include quoteChar, given escapeChar', {
+  descriptor <- helpers.from.json.to.list('{
+     "name": "name",
+     "data": "data",
+     "profile": "tabular-data-resource",
+     "dialect": {
+       "delimiter": "custom",
+       "escapeChar": "/+"
+     }
+   }')
+  resource <- Resource.load(descriptor)
+  expect_equivalent(resource$descriptor, list(
+    name = 'name',
+    data = 'data',
+    profile = 'tabular-data-resource',
+    dialect = list(
+      delimiter = 'custom',
+      escapeChar = '/+',
+      doubleQuote = TRUE,
+      lineTerminator = '\r\n',
+      skipInitialSpace = TRUE,
+      header = TRUE,
+      caseSensitiveHeader = FALSE
+    ),    encoding = 'utf-8'
+  )
+  
+  )
+})
+
+
+test_that('tabular resource dialect throws error given escapeChar and quoteChar', {
+  descriptor <- helpers.from.json.to.list('{
+     "name": "name",
+     "data": "data",
+     "profile": "tabular-data-resource",
+     "dialect": {
+       "delimiter": "custom",
+       "escapeChar": "\",
+       "quoteChar": "\'"
+     }
+   }')
+  
+  expect_error(Resource.load(descriptor)$descriptor, "quoteChar and escapeChar are mutually exclusive")
+})
 #######################################################
 testthat::context('Resource #source/sourceType')
 ########################################################
@@ -571,12 +644,41 @@ test_that('preserve resource format from descriptor ', {
                  }
 }'))
 })
+#######################################################
+testthat::context('Resource #encoding')
+#######################################################
 
+# test_that('it supports encoding property', {
+#   descriptor <- '{
+#         "path": "inst/extdata/latin1.csv",
+#         "encoding": "latin1",
+#         "schema": {"fields": [{"name": "id"}, {"name": "name"}]}
+#       }'
+#   resource <- Resource.load(descriptor)
+#   rows <- resource$read(keyed = TRUE)
+#   expect_equal(rows, helpers.from.json.to.list('[{"id": "1", "name": "english"},{"id": "2", "name": "©"}]'))
+# })
+
+
+test_that('it reads incorreclty if proper encoding is not set', {
+  descriptor <- '{
+        "path": "inst/extdata/latin1.csv",
+        "schema": {"fields": [{"name": "id"}, {"name": "name"}]}
+      }'
+  resource <- Resource.load(descriptor)
+  rows <- resource$read(keyed = F)
+  expect_error(expect_equal(rows,
+               helpers.from.json.to.list(
+                 '[
+        {"id": "1", "name": "english"},
+        {"id": "2", "name": "©"}
+      ]')))
+})
 #######################################################
 testthat::context('Resource #dialect')
 #######################################################
 
-test_that('it supports dialect.delimiter', {
+test_that('it supports dialect$delimiter', {
   descriptor <-helpers.from.json.to.list('{
                                            "profile": "tabular-data-resource",
                                            "path": "inst/extdata/data.dialect.csv",
@@ -608,7 +710,7 @@ test_that('it supports dialect.delimiter', {
                                                    ]'))
 })
 
-test_that('it supports dialect.delimiter and true relations', {
+test_that('it supports dialect$delimiter and true relations', {
   descriptor <-helpers.from.json.to.list('{
                                            "profile": "tabular-data-resource",
                                            "path": "inst/extdata/data.dialect.csv",
@@ -638,6 +740,9 @@ test_that('it supports dialect.delimiter and true relations', {
                                                      "size": "305"
                                                    }]'))
 })
+
+
+
 
 #######################################################
 testthat::context('Resource #commit')
