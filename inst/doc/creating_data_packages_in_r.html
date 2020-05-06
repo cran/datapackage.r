@@ -12,34 +12,48 @@
 
 <meta name="author" content="Kleanthis Koupidis" />
 
-<meta name="date" content="2020-03-11" />
+<meta name="date" content="2020-05-06" />
 
 <title>Creating Data Packages in R</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -48,9 +62,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -301,7 +315,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Creating Data Packages in R</h1>
 <h4 class="author">Kleanthis Koupidis</h4>
-<h4 class="date">2020-03-11</h4>
+<h4 class="date">2020-05-06</h4>
 
 
 
@@ -310,23 +324,23 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1>Setup</h1>
 <p>For this tutorial, we will need the Data Package R package (<a href="https://github.com/frictionlessdata/datapackage-r">datapackage.r</a>).</p>
 <p><a href="https://cran.r-project.org/package=devtools">devtools package</a> is required to install the datapackage.r package from github.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Install devtools package if not already</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Install devtools package if not already</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span></code></pre></div>
 <p>And then install the development version of <a href="https://github.com/frictionlessdata/datapackage-r">datapackage.r</a> from github.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">install.packages</span>(<span class="st">&quot;datapackage.r&quot;</span>)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="co"># or install the development package</span></a>
-<a class="sourceLine" id="cb2-3" title="3">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;frictionlessdata/datapackage.r&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;datapackage.r&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co"># or install the development package</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;frictionlessdata/datapackage.r&quot;</span>)</span></code></pre></div>
 </div>
 <div id="load" class="section level1">
 <h1>Load</h1>
 <p>You can start using the package by loading <code>datapackage.r</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(datapackage.r)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(datapackage.r)</span></code></pre></div>
 <p>You can add useful metadata by adding keys to metadata dict attribute. Below, we are adding the required <code>name</code> key as well as a human-readable <code>title</code> key. For the keys supported, please consult the full <a href="https://frictionlessdata.io/specs/data-package/#metadata">Data Package spec</a>. Note, we will be creating the required <code>resources</code> key further down below.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">dataPackage &lt;-<span class="st"> </span><span class="kw">Package.load</span>()</a>
-<a class="sourceLine" id="cb4-2" title="2">dataPackage<span class="op">$</span>descriptor[<span class="st">&#39;name&#39;</span>] &lt;-<span class="st"> &#39;period-table&#39;</span></a>
-<a class="sourceLine" id="cb4-3" title="3">dataPackage<span class="op">$</span>descriptor[<span class="st">&#39;title&#39;</span>] &lt;-<span class="st"> &#39;Periodic Table&#39;</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co"># commit the changes to Package class</span></a>
-<a class="sourceLine" id="cb4-5" title="5">dataPackage<span class="op">$</span><span class="kw">commit</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>dataPackage &lt;-<span class="st"> </span><span class="kw">Package.load</span>()</span>
+<span id="cb4-2"><a href="#cb4-2"></a>dataPackage<span class="op">$</span>descriptor[<span class="st">&#39;name&#39;</span>] &lt;-<span class="st"> &#39;period-table&#39;</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>dataPackage<span class="op">$</span>descriptor[<span class="st">&#39;title&#39;</span>] &lt;-<span class="st"> &#39;Periodic Table&#39;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># commit the changes to Package class</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>dataPackage<span class="op">$</span><span class="kw">commit</span>()</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="infer-a-csv-schema" class="section level1">
@@ -415,43 +429,43 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 </tbody>
 </table>
-<p>We can guess at our CSV’s <a href="https://frictionlessdata.io/guides/table-schema/">schema</a> by using <code>infer</code> from the Table Schema package. We pass directly the remote link to the infer function, the result of which is an inferred schema. For example, if the processor detects only integers in a given column, it will assign <code>integer</code> as a column type.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">filepath &lt;-<span class="st"> &#39;https://raw.githubusercontent.com/frictionlessdata/datapackage-r/master/vignettes/exampledata/data.csv&#39;</span></a>
-<a class="sourceLine" id="cb6-2" title="2"></a>
-<a class="sourceLine" id="cb6-3" title="3">schema &lt;-<span class="st"> </span>tableschema.r<span class="op">::</span><span class="kw">infer</span>(filepath)</a></code></pre></div>
+<p>We can guess at our CSV’s <a href="https://frictionlessdata.io/table-schema/">schema</a> by using <code>infer</code> from the Table Schema package. We pass directly the remote link to the infer function, the result of which is an inferred schema. For example, if the processor detects only integers in a given column, it will assign <code>integer</code> as a column type.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>filepath &lt;-<span class="st"> &#39;https://raw.githubusercontent.com/frictionlessdata/datapackage-r/master/vignettes/exampledata/data.csv&#39;</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a>schema &lt;-<span class="st"> </span>tableschema.r<span class="op">::</span><span class="kw">infer</span>(filepath)</span></code></pre></div>
 <p>Once we have a schema, we are now ready to add a <code>resource</code> key to the Data Package which points to the resource path and its newly created schema. Below we define resources with three ways, using json text format with usual assignment operator in R list objects and directly using <code>addResource</code> function of <code>Package</code> class:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># define resources using json text </span></a>
-<a class="sourceLine" id="cb7-2" title="2">resources &lt;-<span class="st"> </span><span class="kw">helpers.from.json.to.list</span>(</a>
-<a class="sourceLine" id="cb7-3" title="3">  <span class="st">&#39;[{</span></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="st">    &quot;name&quot;: &quot;data&quot;,</span></a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="st">    &quot;path&quot;: &quot;filepath&quot;,</span></a>
-<a class="sourceLine" id="cb7-6" title="6"><span class="st">    &quot;schema&quot;: &quot;schema&quot;</span></a>
-<a class="sourceLine" id="cb7-7" title="7"><span class="st">  }]&#39;</span></a>
-<a class="sourceLine" id="cb7-8" title="8">)</a>
-<a class="sourceLine" id="cb7-9" title="9">resources[[<span class="dv">1</span>]]<span class="op">$</span>schema &lt;-<span class="st"> </span>schema</a>
-<a class="sourceLine" id="cb7-10" title="10">resources[[<span class="dv">1</span>]]<span class="op">$</span>path &lt;-<span class="st"> </span>filepath</a></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># or define resources using list object</span></a>
-<a class="sourceLine" id="cb8-2" title="2">resources &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">list</span>(</a>
-<a class="sourceLine" id="cb8-3" title="3">  <span class="dt">name =</span> <span class="st">&quot;data&quot;</span>,</a>
-<a class="sourceLine" id="cb8-4" title="4">  <span class="dt">path =</span> filepath,</a>
-<a class="sourceLine" id="cb8-5" title="5">  <span class="dt">schema =</span> schema</a>
-<a class="sourceLine" id="cb8-6" title="6">  ))</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># define resources using json text </span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>resources &lt;-<span class="st"> </span><span class="kw">helpers.from.json.to.list</span>(</span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="st">&#39;[{</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="st">    &quot;name&quot;: &quot;data&quot;,</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="st">    &quot;path&quot;: &quot;filepath&quot;,</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="st">    &quot;schema&quot;: &quot;schema&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="st">  }]&#39;</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>)</span>
+<span id="cb7-9"><a href="#cb7-9"></a>resources[[<span class="dv">1</span>]]<span class="op">$</span>schema &lt;-<span class="st"> </span>schema</span>
+<span id="cb7-10"><a href="#cb7-10"></a>resources[[<span class="dv">1</span>]]<span class="op">$</span>path &lt;-<span class="st"> </span>filepath</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># or define resources using list object</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>resources &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">list</span>(</span>
+<span id="cb8-3"><a href="#cb8-3"></a>  <span class="dt">name =</span> <span class="st">&quot;data&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="dt">path =</span> filepath,</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="dt">schema =</span> schema</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  ))</span></code></pre></div>
 <p>And now, add resources to the Data Package:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">dataPackage<span class="op">$</span>descriptor[[<span class="st">&#39;resources&#39;</span>]] &lt;-<span class="st"> </span>resources</a>
-<a class="sourceLine" id="cb9-2" title="2">dataPackage<span class="op">$</span><span class="kw">commit</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>dataPackage<span class="op">$</span>descriptor[[<span class="st">&#39;resources&#39;</span>]] &lt;-<span class="st"> </span>resources</span>
+<span id="cb9-2"><a href="#cb9-2"></a>dataPackage<span class="op">$</span><span class="kw">commit</span>()</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>Or you can directly add resources using <code>addResources</code> function of <code>Package</code> class:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">resources &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">list</span>(</a>
-<a class="sourceLine" id="cb11-2" title="2">  <span class="dt">name =</span> <span class="st">&quot;data&quot;</span>,</a>
-<a class="sourceLine" id="cb11-3" title="3">  <span class="dt">path =</span> filepath,</a>
-<a class="sourceLine" id="cb11-4" title="4">  <span class="dt">schema =</span> schema</a>
-<a class="sourceLine" id="cb11-5" title="5">  ))</a>
-<a class="sourceLine" id="cb11-6" title="6"></a>
-<a class="sourceLine" id="cb11-7" title="7">dataPackage<span class="op">$</span><span class="kw">addResource</span>(resources)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>resources &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">list</span>(</span>
+<span id="cb11-2"><a href="#cb11-2"></a>  <span class="dt">name =</span> <span class="st">&quot;data&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="dt">path =</span> filepath,</span>
+<span id="cb11-4"><a href="#cb11-4"></a>  <span class="dt">schema =</span> schema</span>
+<span id="cb11-5"><a href="#cb11-5"></a>  ))</span>
+<span id="cb11-6"><a href="#cb11-6"></a></span>
+<span id="cb11-7"><a href="#cb11-7"></a>dataPackage<span class="op">$</span><span class="kw">addResource</span>(resources)</span></code></pre></div>
 <p>Now we are ready to write our <code>datapackage.json</code> file to the current working directory.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">dataPackage<span class="op">$</span><span class="kw">save</span>(<span class="st">&#39;exampledata&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>dataPackage<span class="op">$</span><span class="kw">save</span>(<span class="st">&#39;exampledata&#39;</span>)</span></code></pre></div>
 <p>The <code>datapackage.json</code> (<a href="https://raw.githubusercontent.com/frictionlessdata/datapackage-r/master/vignettes/exampledata/package.json">download</a>) is inlined below. Note that atomic number has been correctly inferred as an <code>integer</code> and atomic mass as a <code>number</code> (float) while every other column is a <code>string</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">jsonlite<span class="op">::</span><span class="kw">prettify</span>(<span class="kw">helpers.from.list.to.json</span>(dataPackage<span class="op">$</span>descriptor))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>jsonlite<span class="op">::</span><span class="kw">prettify</span>(<span class="kw">helpers.from.list.to.json</span>(dataPackage<span class="op">$</span>descriptor))</span></code></pre></div>
 <pre><code>## {
 ##     &quot;profile&quot;: &quot;data-package&quot;,
 ##     &quot;name&quot;: &quot;period-table&quot;,
@@ -501,7 +515,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="publishing" class="section level1">
 <h1>Publishing</h1>
-<p>Now that you have created your Data Package, you might want to <a href="https://frictionlessdata.io/guides/publish-online/">publish your data online</a> so that you can share it with others.</p>
+<p>Now that you have created your Data Package, you might want to <a href="https://frictionlessdata.io/blog/2016/08/29/publish-online/">publish your data online</a> so that you can share it with others.</p>
 </div>
 
 
