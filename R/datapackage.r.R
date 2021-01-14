@@ -1,6 +1,6 @@
 #' Frictionless Data Package
 #' 
-#' @description Work frictionless with 'Data Packages' (<https://frictionlessdata.io/specs/data-package/>). 
+#' @description Work frictionless with 'Data Packages' (<https://specs.frictionlessdata.io//data-package/>). 
 #' Allows to load and validate any descriptor for a data package profile, 
 #' create and modify descriptors and provides expose methods for reading 
 #' and streaming data in the package. When a descriptor is a 'Tabular Data Package', 
@@ -75,7 +75,7 @@
 #' Adherence to the specification does not imply that additional, non-specified properties cannot be used: 
 #' a descriptor \code{MAY} include any number of properties in additional to those described as required and optional properties. 
 #' For example, if you were storing time series data and wanted to list the temporal coverage of the data in the Data Package 
-#' you could add a property \code{temporal} (cf \href{http://dublincore.org/documents/usageguide/qualifiers.shtml#temporal}{Dublin Core}):
+#' you could add a property \code{temporal} (cf \href{https://www.dublincore.org/specifications/dublin-core/usageguide/qualifiers/}{Dublin Core}):
 #' 
 #' \code{
 #' "temporal": {
@@ -86,13 +86,13 @@
 #' }
 #' 
 #' This flexibility enables specific communities to extend Data Packages as appropriate for the data 
-#' they manage. As an example, the \href{https://frictionlessdata.io/specs/tabular-data-package/}{Tabular Data Package} 
+#' they manage. As an example, the \href{https://specs.frictionlessdata.io//tabular-data-package/}{Tabular Data Package} 
 #' specification extends Data Package to the case where all the data is tabular and stored in CSV.
 #' 
 #' @section Resource Information: 
 #' Packaged data resources are described in the \code{resources} property of the package descriptor. 
 #' This property \code{MUST} be an array/list of \code{objects}. Each object \code{MUST} follow the 
-#' \href{https://frictionlessdata.io/specs/data-resource/}{Data Resource specification}.
+#' \href{https://specs.frictionlessdata.io//data-resource/}{Data Resource specification}.
 #' 
 #' See also \code{\link{Resource}} Class
 #' 
@@ -149,28 +149,28 @@
 #' \code{
 #' "licenses": [{
 #' "name": "ODC-PDDL-1.0",
-#' "path": "http://opendatacommons.org/licenses/pddl/",
+#' "path": "https://opendatacommons.org/licenses/pddl/",
 #' "title": "Open Data Commons Public Domain Dedication and License v1.0"
 #' }]
 #' }
 #' 
 #' \itemize{
-#' \item{\code{name}: The \code{name} \code{MUST} be an \href{http://licenses.opendefinition.org/}{Open Definition license ID}.}
-#' \item{\code{path}: A \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{url-or-path string}, 
+#' \item{\code{name}: The \code{name} \code{MUST} be an \href{https://opendefinition.org/licenses/api/}{Open Definition license ID}.}
+#' \item{\code{path}: A \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{url-or-path string}, 
 #' that is a fully qualified HTTP address, or a relative POSIX path (see 
-#' \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
+#' \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
 #' \item{\code{title}: A human-readable title.}
 #' }
 #' }
 #' 
 #' \item{\code{profile}}{
-#' A string identifying the \href{https://frictionlessdata.io/specs/profiles/}{profile} of this descriptor as per 
-#' the \href{https://frictionlessdata.io/specs/profiles/}{profiles} specification.}
+#' A string identifying the \href{https://specs.frictionlessdata.io//profiles/}{profile} of this descriptor as per 
+#' the \href{https://specs.frictionlessdata.io//profiles//}{profiles} specification.}
 #' 
 #' Examples: 
 #' \itemize{
 #' \item{\code{{"profile": "tabular-data-package"}}}
-#' \item{\code{{"profile": "http://example.com/my-profiles-json-schema.json"}}}
+#' \item{\code{{"profile": "https://example.com/my-profiles-json-schema.json"}}}
 #' }
 #' }
 #' 
@@ -182,15 +182,15 @@
 #' 
 #' \item{\code{title}}{A string providing a \code{title} or one sentence description for this package.}
 #' 
-#' \item{\code{description}}{A description of the package. The description \code{MUST} be \href{http://commonmark.org/}{markdown} 
+#' \item{\code{description}}{A description of the package. The description \code{MUST} be \href{https://commonmark.org/}{markdown} 
 #' formatted -- this also allows for simple plain text as plain text is itself valid markdown. The first paragraph 
 #' (up to the first double line break) should be usable as summary information for the package.}
 #' 
 #' \item{\code{homepage}}{A URL for the home on the web that is related to this data package.}
 #' 
 #' \item{\code{version}}{A version string identifying the version of the package. It should conform to the 
-#' \href{http://semver.org/}{Semantic Versioning} requirements and should follow the 
-#' \href{https://frictionlessdata.io/specs/patterns/#data-package-version}{Data Package Version} pattern.}
+#' \href{https://semver.org/}{Semantic Versioning} requirements and should follow the 
+#' \href{https://specs.frictionlessdata.io//patterns/}{Data Package Version} pattern.}
 #' 
 #' \item{\code{sources}}{The raw sources for this data package. It \code{MUST} be an array of Source objects. Each Source object \code{MUST} have a \code{title} and \code{MAY} have \code{path} and/or \code{email} properties. 
 #' 
@@ -199,15 +199,15 @@
 #' \code{
 #'   "sources": [{
 #'     "title": "World Bank and OECD",
-#'     "path": "http://data.worldbank.org/indicator/NY.GDP.MKTP.CD"
+#'     "path": "https://data.worldbank.org/indicator/NY.GDP.MKTP.CD"
 #'   }]
 #' }
 #' 
 #' \itemize{
 #' \item{\code{title}: Title of the source (e.g. document or organization name).}
-#' \item{\code{path}: A \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{url-or-path string}, 
+#' \item{\code{path}: A \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{url-or-path string}, 
 #' that is a fully qualified HTTP address, or a relative POSIX path (see 
-#' \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
+#' \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
 #' \item{\code{email}: An email address.}
 #' }
 #' }
@@ -226,14 +226,14 @@
 #'    "contributors": [{
 #'      "title": "Joe Bloggs",
 #'      "email": "joe@bloggs.com",
-#'      "path": "http://www.bloggs.com",
+#'      "path": "https://www.bloggs.com",
 #'      "role": "author"
 #'    }]
 #' }
 #' 
 #' \itemize{
 #' \item{\code{title}: Name/Title of the contributor (name for person, name/title of organization).}
-#' \item{\code{path}: A fully qualified http URL pointing to a relevant location online for the contributor.}
+#' \item{\code{path}: A fully qualified https URL pointing to a relevant location online for the contributor.}
 #' \item{\code{email}: An email address.}
 #' \item{\code{role}: A string describing the role of the contributor. It \code{MUST} be one of: \code{author}, 
 #'   \code{publisher}, \code{maintainer}, \code{wrangler}, and \code{contributor}. Defaults to \code{contributor}.
@@ -251,9 +251,9 @@
 #' An image to use for this data package. For example, when showing the package in a listing.
 #' 
 #' The value of the image property \code{MUST} be a string pointing to the location of the image. 
-#' The string must be a \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{url-or-path}, 
+#' The string must be a \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{url-or-path}, 
 #' that is a fully qualified HTTP address, or a relative POSIX path (see 
-#' \href{https://frictionlessdata.io/specs/data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
+#' \href{https://specs.frictionlessdata.io//data-resource/#url-or-path}{the url-or-path definition in Data Resource for details}).}
 #' 
 #' 
 #' \item{\code{created}}{ 
@@ -294,6 +294,6 @@
 #' @name datapackage.r-package
 #' 
 #' @seealso 
-#' \href{https://frictionlessdata.io/specs/data-package/}{Data Package Specifications}
+#' \href{https://specs.frictionlessdata.io//data-package/}{Data Package Specifications}
 #' 
 NULL
