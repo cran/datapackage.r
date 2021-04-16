@@ -12,7 +12,7 @@
 
 <meta name="author" content="Kleanthis Koupidis" />
 
-<meta name="date" content="2021-01-14" />
+<meta name="date" content="2021-04-16" />
 
 <title>Using Data Packages in R</title>
 
@@ -29,45 +29,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-<style type="text/css">
-a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
-a.anchor-section::before {content: '#';}
-.hasAnchor:hover a.anchor-section {visibility: visible;}
-</style>
-<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
-document.addEventListener('DOMContentLoaded', function() {
-  // Do nothing if AnchorJS is used
-  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
-    return;
-  }
-
-  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-
-  // Do nothing if sections are already anchored
-  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
-    return null;
-  }
-
-  // Use section id when pandoc runs with --section-divs
-  const section_id = function(x) {
-    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
-            ? x.id : '');
-  };
-
-  // Add anchors
-  h.forEach(function(x) {
-    const id = x.id || section_id(x.parentElement);
-    if (id === '') {
-      return null;
-    }
-    let anchor = document.createElement('a');
-    anchor.href = '#' + id;
-    anchor.classList = ['anchor-section'];
-    x.classList.add('hasAnchor');
-    x.appendChild(anchor);
-  });
-});
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -79,7 +40,14 @@ document.addEventListener('DOMContentLoaded', function() {
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -166,6 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -363,7 +332,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Using Data Packages in R</h1>
 <h4 class="author">Kleanthis Koupidis</h4>
-<h4 class="date">2021-01-14</h4>
+<h4 class="date">2021-04-16</h4>
 
 
 
@@ -464,24 +433,23 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">install.packages</span>(<span class="kw">c</span>(<span class="st">&quot;DBI&quot;</span>,<span class="st">&quot;RSQLite&quot;</span>))</span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="kw">library</span>(DBI)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a><span class="kw">library</span>(RSQLite)</span></code></pre></div>
-<pre><code>## Warning: package &#39;RSQLite&#39; was built under R version 4.0.3</code></pre>
 <p>To create a new SQLite database, you simply supply the filename to <code>dbConnect()</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a>dp.database &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;&quot;</span>) <span class="co"># temporary database</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>dp.database &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;&quot;</span>) <span class="co"># temporary database</span></span></code></pre></div>
 <p>We will use data.table package to convert the list object with the data to a data frame in order to copy them to database table.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="co"># install data.table package if not already</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="co"># install.packages(&quot;data.table&quot;)</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>periodic_table_sql &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">rbindlist</span>(periodic_table_data)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a>periodic_table_sql &lt;-<span class="st"> </span><span class="kw">setNames</span>(periodic_table_sql,<span class="kw">unlist</span>(datapackage<span class="op">$</span>resources[[<span class="dv">1</span>]]<span class="op">$</span>headers))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="co"># install data.table package if not already</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="co"># install.packages(&quot;data.table&quot;)</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>periodic_table_sql &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">rbindlist</span>(periodic_table_data)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a>periodic_table_sql &lt;-<span class="st"> </span><span class="kw">setNames</span>(periodic_table_sql,<span class="kw">unlist</span>(datapackage<span class="op">$</span>resources[[<span class="dv">1</span>]]<span class="op">$</span>headers))</span></code></pre></div>
 <p>You can easily copy an R data frame into a SQLite database with dbWriteTable():</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">dbWriteTable</span>(dp.database, <span class="st">&quot;periodic_table_sql&quot;</span>, periodic_table_sql)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="co"># show remote tables accessible through this connection</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a><span class="kw">dbListTables</span>(dp.database)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">dbWriteTable</span>(dp.database, <span class="st">&quot;periodic_table_sql&quot;</span>, periodic_table_sql)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="co"># show remote tables accessible through this connection</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="kw">dbListTables</span>(dp.database)</span></code></pre></div>
 <pre><code>## [1] &quot;periodic_table_sql&quot;</code></pre>
 <p>The data are already to the database.</p>
 <p>We can further issue queries to hte database:</p>
 <p>Return first 5 elements:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">dbGetQuery</span>(dp.database, <span class="st">&#39;SELECT * FROM periodic_table_sql LIMIT 5&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="kw">dbGetQuery</span>(dp.database, <span class="st">&#39;SELECT * FROM periodic_table_sql LIMIT 5&#39;</span>)</span></code></pre></div>
 <pre><code>##   atomic number symbol      name atomic mass   metal or nonmetal?
 ## 1             1      H  Hydrogen    1.007940             nonmetal
 ## 2             2     He    Helium    4.002602            noble gas
@@ -489,7 +457,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 4             4     Be Beryllium    9.012182 alkaline earth metal
 ## 5             5      B     Boron   10.811000            metalloid</code></pre>
 <p>Return all elements with an atomic number of less than 10:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="kw">dbGetQuery</span>(dp.database, <span class="st">&#39;SELECT * FROM periodic_table_sql WHERE &quot;atomic number&quot; &lt; 10&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">dbGetQuery</span>(dp.database, <span class="st">&#39;SELECT * FROM periodic_table_sql WHERE &quot;atomic number&quot; &lt; 10&#39;</span>)</span></code></pre></div>
 <pre><code>##   atomic number symbol      name atomic mass   metal or nonmetal?
 ## 1             1      H  Hydrogen    1.007940             nonmetal
 ## 2             2     He    Helium    4.002602            noble gas

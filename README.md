@@ -1,4 +1,4 @@
-Frictionless Data - Data Package
+Frictionless Data - <br/>Data Package
 ================
 
 # Description
@@ -40,11 +40,11 @@ Even more detailed installation instructions can be found in [R
 Installation and Administration
 manual](https://cran.r-project.org/doc/manuals/R-admin.html).
 
-To install [RStudio](https://rstudio.com/), you can download [RStudio
-Desktop](https://rstudio.com/products/rstudio/download/) with Open
-Source License and follow the wizard instructions:
+To install [RStudio](https://www.rstudio.com/), you can download
+[RStudio Desktop](https://www.rstudio.com/products/rstudio/download/)
+with Open Source License and follow the wizard instructions:
 
-1.  Go to [RStudio](https://rstudio.com/products/rstudio/)
+1.  Go to [RStudio](https://www.rstudio.com/products/rstudio/)
 2.  Click download on RStudio Desktop
 3.  Download on RStudio Desktop free download
 4.  Select the appropriate file for your system
