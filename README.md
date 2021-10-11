@@ -1,4 +1,4 @@
-Frictionless Data - <br/>Data Package
+Frictionless Data - Data Package
 ================
 
 # Description
@@ -54,18 +54,24 @@ To install the `datapackage` package it is necessary to install first
 [devtools package](https://cran.r-project.org/package=devtools) to make
 installation of github packages available.
 
-    # Install devtools package if not already
-    install.packages("devtools")
+``` r
+# Install devtools package if not already
+install.packages("devtools")
+```
 
 Install `datapackage.r`
 
-    # And then install the development version from github
-    devtools::install_github("frictionlessdata/datapackage-r")
+``` r
+# And then install the development version from github
+devtools::install_github("frictionlessdata/datapackage-r")
+```
 
 ## Load package
 
-    # load the package using
-    library(datapackage.r)
+``` r
+# load the package using
+library(datapackage.r)
+```
 
 # Examples
 
@@ -74,29 +80,31 @@ even more
 [examples](https://github.com/frictionlessdata/datapackage-r/tree/master/vignettes)
 in vignettes directory.
 
-    descriptor <- '{
-      "resources": [
-        {
-          "name": "example",
-          "profile": "tabular-data-resource",
-          "data": [
-            ["height", "age", "name"],
-            [180, 18, "Tony"],
-            [192, 32, "Jacob"]
-          ],
-          "schema":  {
-            "fields": [
-              {"name": "height", "type": "integer" },
-              {"name": "age", "type": "integer" },
-              {"name": "name", "type": "string" }
-            ]
-          }
-        }
-      ]
-    }'
+``` r
+descriptor <- '{
+  "resources": [
+    {
+      "name": "example",
+      "profile": "tabular-data-resource",
+      "data": [
+        ["height", "age", "name"],
+        [180, 18, "Tony"],
+        [192, 32, "Jacob"]
+      ],
+      "schema":  {
+        "fields": [
+          {"name": "height", "type": "integer" },
+          {"name": "age", "type": "integer" },
+          {"name": "name", "type": "string" }
+        ]
+      }
+    }
+  ]
+}'
 
-    dataPackage <- Package.load(descriptor)
-    dataPackage
+dataPackage <- Package.load(descriptor)
+dataPackage
+```
 
     ## <Package>
     ##   Public:
@@ -128,9 +136,11 @@ in vignettes directory.
     ##     resources_length: NULL
     ##     strict_: FALSE
 
-    resource <- dataPackage$getResource('example')
-    # convert to json and add indentation with jsonlite prettify function
-    jsonlite::prettify(helpers.from.list.to.json(resource$read()))
+``` r
+resource <- dataPackage$getResource('example')
+# convert to json and add indentation with jsonlite prettify function
+jsonlite::prettify(helpers.from.list.to.json(resource$read()))
+```
 
     ## [
     ##     [
@@ -167,28 +177,36 @@ descriptor, saving a data package descriptor and many more.
 Consider we have some local `csv` files in a `data` directory. Let’s
 create a data package based on this data using a `Package` class:
 
-> inst/extdata/readme\_example/cities.csv
+> inst/extdata/readme_example/cities.csv
 
-    city,location
-    london,"51.50,-0.11"
-    paris,"48.85,2.30"
-    rome,"41.89,12.51"
+``` csv
+city,location
+london,"51.50,-0.11"
+paris,"48.85,2.30"
+rome,"41.89,12.51"
+```
 
-> inst/extdata/readme\_example/population.csv
+> inst/extdata/readme_example/population.csv
 
-    city,year,population
-    london,2017,8780000
-    paris,2017,2240000
-    rome,2017,2860000
+``` csv
+city,year,population
+london,2017,8780000
+paris,2017,2240000
+rome,2017,2860000
+```
 
 First we create a blank data package:
 
-    dataPackage <- Package.load()
+``` r
+dataPackage <- Package.load()
+```
 
 Now we’re ready to infer a data package descriptor based on data files
 we have. Because we have two csv files we use glob pattern `csv`:
 
-    jsonlite::toJSON(dataPackage$infer('csv'), pretty = TRUE)
+``` r
+jsonlite::toJSON(dataPackage$infer('csv'), pretty = TRUE)
+```
 
     ## {
     ##   "profile": ["tabular-data-package"],
@@ -251,7 +269,9 @@ we have. Because we have two csv files we use glob pattern `csv`:
     ##   ]
     ## }
 
-    jsonlite::toJSON(dataPackage$descriptor, pretty = TRUE)
+``` r
+jsonlite::toJSON(dataPackage$descriptor, pretty = TRUE)
+```
 
     ## {
     ##   "profile": ["tabular-data-package"],
@@ -318,18 +338,24 @@ An `infer` method has found all our files and inspected it to extract
 useful metadata like profile, encoding, format, Table Schema etc. Let’s
 tweak it a little bit:
 
-    dataPackage$descriptor$resources[[2]]$schema$fields[[2]]$type <- 'year'
-    dataPackage$commit()
+``` r
+dataPackage$descriptor$resources[[2]]$schema$fields[[2]]$type <- 'year'
+dataPackage$commit()
+```
 
     ## [1] TRUE
 
-    dataPackage$valid
+``` r
+dataPackage$valid
+```
 
     ## [1] TRUE
 
 Because our resources are tabular we could read it as a tabular data:
 
-    jsonlite::toJSON(dataPackage$getResource("population")$read(keyed = TRUE),auto_unbox = FALSE,pretty = TRUE)
+``` r
+jsonlite::toJSON(dataPackage$getResource("population")$read(keyed = TRUE),auto_unbox = FALSE,pretty = TRUE)
+```
 
     ## [
     ##   {
@@ -352,13 +378,17 @@ Because our resources are tabular we could read it as a tabular data:
 Let’s save our descriptor on the disk. After it we could update our
 `datapackage.json` as we want, make some changes etc:
 
-    dataPackage.save('datapackage.json')
+``` r
+dataPackage.save('datapackage.json')
+```
 
 To continue the work with the data package we just load it again but
 this time using local `datapackage.json`:
 
-    dataPackage <- Package.load('datapackage.json')
-    # Continue the work
+``` r
+dataPackage <- Package.load('datapackage.json')
+# Continue the work
+```
 
 It was one basic introduction to the `Package` class. To learn more
 let’s take a look on `Package` class API reference.
@@ -373,22 +403,28 @@ Consider we have some local csv file. It could be inline data or remote
 link - all supported by `Resource` class (except local files for
 in-brower usage of course). But say it’s `cities.csv` for now:
 
-    city,location
-    london,"51.50,-0.11"
-    paris,"48.85,2.30"
-    rome,N/A
+``` csv
+city,location
+london,"51.50,-0.11"
+paris,"48.85,2.30"
+rome,N/A
+```
 
 Let’s create and read a resource. We use static `Resource$load` method
 instantiate a resource. Because resource is tabular we could use
 `resourceread` method with a `keyed` option to get an list of keyed
 rows:
 
-    resource <- Resource.load('{"path": "cities.csv"}')
-    resource$tabular
+``` r
+resource <- Resource.load('{"path": "cities.csv"}')
+resource$tabular
+```
 
     ## [1] TRUE
 
-    jsonlite::toJSON(resource$read(keyed = TRUE), pretty = TRUE)
+``` r
+jsonlite::toJSON(resource$read(keyed = TRUE), pretty = TRUE)
+```
 
     ## [
     ##   {
@@ -410,7 +446,9 @@ geopoints. Also Rome’s location is not available but it’s also just a
 `N/A` string instead of `null`. First we have to infer resource
 metadata:
 
-    jsonlite::toJSON(resource$infer(), pretty = TRUE)
+``` r
+jsonlite::toJSON(resource$infer(), pretty = TRUE)
+```
 
     ## {
     ##   "path": ["cities.csv"],
@@ -438,7 +476,9 @@ metadata:
     ##   }
     ## }
 
-    jsonlite::toJSON(resource$descriptor, pretty = TRUE)
+``` r
+jsonlite::toJSON(resource$descriptor, pretty = TRUE)
+```
 
     ## {
     ##   "path": ["cities.csv"],
@@ -466,8 +506,10 @@ metadata:
     ##   }
     ## }
 
-    # resource$read( keyed = TRUE )
-    # # Fails with a data validation error
+``` r
+# resource$read( keyed = TRUE )
+# # Fails with a data validation error
+```
 
 Let’s fix not available location. There is a `missingValues` property in
 Table Schema specification. As a first try we set `missingValues` to
@@ -475,16 +517,22 @@ Table Schema specification. As a first try we set `missingValues` to
 changed in-place but all changes should be commited by
 `resource$commit()`:
 
-    resource$descriptor$schema$missingValues <- 'N/A'
-    resource$commit()
+``` r
+resource$descriptor$schema$missingValues <- 'N/A'
+resource$commit()
+```
 
     ## [1] TRUE
 
-    resource$valid # FALSE
+``` r
+resource$valid # FALSE
+```
 
     ## [1] FALSE
 
-    resource$errors
+``` r
+resource$errors
+```
 
     ## [[1]]
     ## [1] "Descriptor validation error:\n            data.schema.missingValues - is the wrong type"
@@ -493,18 +541,24 @@ As a good citiziens we’ve decided to check out recource descriptor
 validity. And it’s not valid! We should use an list for `missingValues`
 property. Also don’t forget to have an empty string as a missing value:
 
-    resource$descriptor$schema[['missingValues']] <- list('', 'N/A')
-    resource$commit()
+``` r
+resource$descriptor$schema[['missingValues']] <- list('', 'N/A')
+resource$commit()
+```
 
     ## [1] TRUE
 
-    resource$valid # TRUE
+``` r
+resource$valid # TRUE
+```
 
     ## [1] TRUE
 
 All good. It looks like we’re ready to read our data again:
 
-    jsonlite::toJSON(resource$read( keyed = TRUE ), pretty = TRUE)
+``` r
+jsonlite::toJSON(resource$read( keyed = TRUE ), pretty = TRUE)
+```
 
     ## [
     ##   {
@@ -527,43 +581,49 @@ longitude - Rome’s location is a native JavaScript `null`
 And because there are no errors on data reading we could be sure that
 our data is valid againt our schema. Let’s save our resource descriptor:
 
-    resource$save('dataresource.json')
+``` r
+resource$save('dataresource.json')
+```
 
 Let’s check newly-crated `dataresource.json`. It contains path to our
 data file, inferred metadata and our `missingValues` tweak:
 
-    {
-    "path": "data.csv",
-    "profile": "tabular-data-resource",
-    "encoding": "utf-8",
-    "name": "data",
-    "format": "csv",
-    "mediatype": "text/csv",
-    "schema": {
-    "fields": [
-    {
-    "name": "city",
-    "type": "string",
-    "format": "default"
-    },
-    {
-    "name": "location",
-    "type": "geopoint",
-    "format": "default"
-    }
-    ],
-    "missingValues": [
-    "",
-    "N/A"
-    ]
-    }
-    }
+``` json
+{
+"path": "data.csv",
+"profile": "tabular-data-resource",
+"encoding": "utf-8",
+"name": "data",
+"format": "csv",
+"mediatype": "text/csv",
+"schema": {
+"fields": [
+{
+"name": "city",
+"type": "string",
+"format": "default"
+},
+{
+"name": "location",
+"type": "geopoint",
+"format": "default"
+}
+],
+"missingValues": [
+"",
+"N/A"
+]
+}
+}
+```
 
 If we decide to improve it even more we could update the
 `dataresource.json` file and then open it again using local file name:
 
-    resource <- Resource.load('dataresource.json')
-    # Continue the work
+``` r
+resource <- Resource.load('dataresource.json')
+# Continue the work
+```
 
 It was one basic introduction to the `Resource` class. To learn more
 let’s take a look on `Resource` class API reference.
@@ -573,16 +633,22 @@ let’s take a look on `Resource` class API reference.
 A component to represent JSON Schema profile from [Profiles
 Registry](https://specs.frictionlessdata.io/schemas/registry.json):
 
-    profile <- Profile.load('data-package')
-    profile$name # data-package
+``` r
+profile <- Profile.load('data-package')
+profile$name # data-package
+```
 
     ## [1] "data-package"
 
-    profile$jsonschema # List of JSON Schema contents
+``` r
+profile$jsonschema # List of JSON Schema contents
+```
 
-    valid_errors <- profile$validate(descriptor)
-    valid <- valid_errors$valid # TRUE if valid descriptor
-    valid
+``` r
+valid_errors <- profile$validate(descriptor)
+valid <- valid_errors$valid # TRUE if valid descriptor
+valid
+```
 
     ## [1] TRUE
 
@@ -590,14 +656,18 @@ Registry](https://specs.frictionlessdata.io/schemas/registry.json):
 
 A standalone function to validate a data package descriptor:
 
-    valid_errors <- validate('{"name": "Invalid Datapackage"}')
+``` r
+valid_errors <- validate('{"name": "Invalid Datapackage"}')
+```
 
 ### Working with infer
 
 A standalone function to infer a data package descriptor.
 
-    descriptor <- infer("csv",basePath = '.')
-    jsonlite::toJSON(descriptor, pretty = TRUE)
+``` r
+descriptor <- infer("csv",basePath = '.')
+jsonlite::toJSON(descriptor, pretty = TRUE)
+```
 
     ## {
     ##   "profile": ["tabular-data-package"],
@@ -670,72 +740,88 @@ integrity will be checked on reading operations.
 
 Consider we have a data package:
 
-    DESCRIPTOR <- '{
-    "resources": [
-    {
-    "name": "teams",
-    "data": [
-    ["id", "name", "city"],
-    ["1", "Arsenal", "London"],
-    ["2", "Real", "Madrid"],
-    ["3", "Bayern", "Munich"]
-    ],
-    "schema": {
-    "fields": [
-    {"name": "id", "type": "integer"},
-    {"name": "name", "type": "string"},
-    {"name": "city", "type": "string"}
-    ],
-    "foreignKeys": [
-    {
-    "fields": "city",
-    "reference": {"resource": "cities", "fields": "name"}
-    }
-    ]
-    }
-    }, {
-    "name": "cities",
-    "data": [
-    ["name", "country"],
-    ["London", "England"],
-    ["Madrid", "Spain"]
-    ]
-    }
-    ]
-    }'
+``` r
+DESCRIPTOR <- '{
+"resources": [
+{
+"name": "teams",
+"data": [
+["id", "name", "city"],
+["1", "Arsenal", "London"],
+["2", "Real", "Madrid"],
+["3", "Bayern", "Munich"]
+],
+"schema": {
+"fields": [
+{"name": "id", "type": "integer"},
+{"name": "name", "type": "string"},
+{"name": "city", "type": "string"}
+],
+"foreignKeys": [
+{
+"fields": "city",
+"reference": {"resource": "cities", "fields": "name"}
+}
+]
+}
+}, {
+"name": "cities",
+"data": [
+["name", "country"],
+["London", "England"],
+["Madrid", "Spain"]
+]
+}
+]
+}'
+```
 
 Let’s check relations for a `teams` resource:
 
-    package <- Package.load(DESCRIPTOR)
-    teams <- package$getResource('teams')
+``` r
+package <- Package.load(DESCRIPTOR)
+teams <- package$getResource('teams')
+```
 
-    teams$checkRelations()
+``` r
+teams$checkRelations()
+```
 
     ## Error: Foreign key 'city' violation in row '4'
 
-    # tableschema.exceptions.RelationError: Foreign key "['city']" violation in row "4"
+``` r
+# tableschema.exceptions.RelationError: Foreign key "['city']" violation in row "4"
+```
 
 As we could see there is a foreign key violation. That’s because our
 lookup table `cities` doesn’t have a city of `Munich` but we have a team
 from there. We need to fix it in `cities` resource:
 
-    package$descriptor$resources[[2]]$data <- rlist::list.append(package$descriptor$resources[[2]]$data, list('Munich', 'Germany'))
-    package$commit()
+``` r
+package$descriptor$resources[[2]]$data <- rlist::list.append(package$descriptor$resources[[2]]$data, list('Munich', 'Germany'))
+package$commit()
+```
 
     ## [1] TRUE
 
-    teams <- package$getResource('teams')
-    teams$checkRelations()
+``` r
+teams <- package$getResource('teams')
+teams$checkRelations()
+```
 
     ## [1] TRUE
 
-    # TRUE
+``` r
+# TRUE
+```
 
 Fixed! But not only a check operation is available. We could use
 `relations` argument for `resource$iter/read` methods to dereference a
 resource relations:
 
-    jsonlite::toJSON(teams$read(keyed = TRUE, relations = FALSE), pretty =  TRUE)
+``` r
+jsonlite::toJSON(teams$read(keyed = TRUE, relations = FALSE), pretty =  TRUE)
+```
 
     ## [
     ##   {
@@ -769,13 +855,12 @@ Package representation
 -   [Package](#Package)
 -   *instance*
 -   [$valid](#Package+valid) ⇒ <code>Boolean</code>
--   [$errors](#Package+errors) ⇒ <code>List.&lt;Error&gt;</code>
+-   [$errors](#Package+errors) ⇒ <code>List.\<Error></code>
 -   [$profile](#Package+profile) ⇒ <code>Profile</code>
 -   [$descriptor](#Package+descriptor) ⇒ <code>Object</code>
--   [$resources](#Package+resources) ⇒
-    <code>List.&lt;Resoruce&gt;</code>
+-   [$resources](#Package+resources) ⇒ <code>List.\<Resoruce></code>
 -   [$resourceNames](#Package+resourceNames) ⇒
-    <code>List.&lt;string&gt;</code>
+    <code>List.\<string></code>
 -   [$getResource(name)](#Package+getResource) ⇒ <code>Resource</code>
     \| <code>null</code>
 -   [$addResource(descriptor)](#Package+addResource) ⇒
@@ -797,13 +882,13 @@ It always `true` in strict mode.
 
 **Returns**: <code>Boolean</code> - returns validation status
 
-#### package$errors ⇒ <code>List.&lt;Error&gt;</code>
+#### package$errors ⇒ <code>List.\<Error></code>
 
 Validation errors
 
 It always empty in strict mode.
 
-**Returns**: <code>List.&lt;Error&gt;</code> - returns validation errors
+**Returns**: <code>List.\<Error></code> - returns validation errors
 
 #### package$profile ⇒ <code>Profile</code>
 
@@ -815,11 +900,11 @@ Descriptor
 
 **Returns**: <code>Object</code> - schema descriptor
 
-#### package$resources ⇒ <code>List.&lt;Resoruce&gt;</code>
+#### package$resources ⇒ <code>List.\<Resoruce></code>
 
 Resources
 
-#### package$resourceNames ⇒ <code>List.&lt;string&gt;</code>
+#### package$resourceNames ⇒ <code>List.\<string></code>
 
 Resource names
 
@@ -880,20 +965,26 @@ not modified
 
 **Example**
 
-    dataPackage <- Package.load('{
-    "name": "package",
-    "resources": [{"name": "resource", "data": ["data"]}]
-    }')
-    dataPackage$descriptor$name # package
+``` r
+dataPackage <- Package.load('{
+"name": "package",
+"resources": [{"name": "resource", "data": ["data"]}]
+}')
+dataPackage$descriptor$name # package
+```
 
     ## [1] "package"
 
-    dataPackage$descriptor$name <- 'renamed-package'
-    dataPackage$descriptor$name # renamed-package
+``` r
+dataPackage$descriptor$name <- 'renamed-package'
+dataPackage$descriptor$name # renamed-package
+```
 
     ## [1] "renamed-package"
 
-    dataPackage$commit()
+``` r
+dataPackage$commit()
+```
 
     ## [1] TRUE
 
@@ -937,7 +1028,7 @@ Resource representation
 -   [Resource](#Resource)
 -   *instance*
 -   [$valid](#Resource+valid) ⇒ <code>Boolean</code>
--   [$errors](#Resource+errors) ⇒ <code>List.&lt;Error&gt;</code>
+-   [$errors](#Resource+errors) ⇒ <code>List.\<Error></code>
 -   [$profile](#Resource+profile) ⇒ <code>Profile</code>
 -   [$descriptor](#Resource+descriptor) ⇒ <code>Object</code>
 -   [$name](#Resource+name) ⇒ <code>string</code>
@@ -948,13 +1039,13 @@ Resource representation
 -   [$tabular](#Resource+tabular) ⇒ <code>boolean</code>
 -   [$source](#Resource+source) ⇒ <code>List</code> \|
     <code>string</code>
--   [$headers](#Resource+headers) ⇒ <code>List.&lt;string&gt;</code>
+-   [$headers](#Resource+headers) ⇒ <code>List.\<string></code>
 -   [$schema](#Resource+schema) ⇒ <code>tableschema.Schema</code>
 -   [$iter(keyed, extended, cast, forceCast, relations,
     stream)](#Resource+iter) ⇒ <code>AsyncIterator</code> \|
     <code>Stream</code>
--   [$read(limit)](#Resource+read) ⇒ <code>List.&lt;List&gt;</code> \|
-    <code>List.&lt;Object&gt;</code>
+-   [$read(limit)](#Resource+read) ⇒ <code>List.\<List></code> \|
+    <code>List.\<Object></code>
 -   [$checkRelations()](#Resource+checkRelations) ⇒ <code>boolean</code>
 -   [$rawIter(stream)](#Resource+rawIter) ⇒ <code>Iterator</code> \|
     <code>Stream</code>
@@ -974,13 +1065,13 @@ It always `true` in strict mode.
 
 **Returns**: <code>Boolean</code> - returns validation status
 
-#### resource$errors ⇒ <code>List.&lt;Error&gt;</code>
+#### resource$errors ⇒ <code>List.\<Error></code>
 
 Validation errors
 
 It always empty in strict mode.
 
-**Returns**: <code>List.&lt;Error&gt;</code> - returns validation errors
+**Returns**: <code>List.\<Error></code> - returns validation errors
 
 #### resource$profile ⇒ <code>Profile</code>
 
@@ -1024,13 +1115,13 @@ Combination of `resource.source` and
 `resource.inline/local/remote/multipart` provides predictable interface
 to work with resource data.
 
-#### resource$headers ⇒ <code>List.&lt;string&gt;</code>
+#### resource$headers ⇒ <code>List.\<string></code>
 
 Headers
 
 > Only for tabular resources
 
-**Returns**: <code>List.&lt;string&gt;</code> - data source headers
+**Returns**: <code>List.\<string></code> - data source headers
 
 #### resource$schema ⇒ <code>tableschema.Schema</code>
 
@@ -1066,16 +1157,16 @@ iterator/stream of rows: - `[value1, value2]` - base -
 | relations | <code>boolean</code> | if true foreign key fields will be checked and resolved to its references                                                                                                                                                                                                             |
 | stream    | <code>boolean</code> | return Node Readable Stream of table rows                                                                                                                                                                                                                                             |
 
-#### resource$read(limit) ⇒ <code>List.&lt;List&gt;</code> \| <code>List.&lt;Object&gt;</code>
+#### resource$read(limit) ⇒ <code>List.\<List></code> \| <code>List.\<Object></code>
 
 Read the table data into memory
 
 > Only for tabular resources; the API is the same as `resource.iter` has
 > except for:
 
-**Returns**: <code>List.&lt;List&gt;</code> \|
-<code>List.&lt;Object&gt;</code> - list of rows: - `[value1, value2]` -
-base - `{header1: value1, header2: value2}` - keyed -
+**Returns**: <code>List.\<List></code> \| <code>List.\<Object></code> -
+list of rows: - `[value1, value2]` - base -
+`{header1: value1, header2: value2}` - keyed -
 `[rowNumber, [header1, header2], [value1, value2]]` - extended
 
 | Param | Type                 | Description           |
@@ -1255,20 +1346,26 @@ commands to work with the project.Recommended way to get started is to
 create, activate and load the package environment. To install package
 and development dependencies into active environment:
 
-    devtools::install_github("frictionlessdata/datapackage-r", dependencies=TRUE)
+``` r
+devtools::install_github("frictionlessdata/datapackage-r", dependencies=TRUE)
+```
 
 To make test:
 
-    test_that(description, {
-    expect_equal(test, expected result)
-    })
+``` r
+test_that(description, {
+expect_equal(test, expected result)
+})
+```
 
 To run tests:
 
-    devtools::test()
+``` r
+devtools::test()
+```
 
 more detailed information about how to create and run tests you can find
-in [testthat package](https://github.com/hadley/testthat)
+in [testthat package](https://github.com/r-lib/testthat)
 
 ## Changelog - News
 

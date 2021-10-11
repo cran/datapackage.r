@@ -46,7 +46,7 @@ test_that('load remote profile 1', {
 test_that('load remote profile', {
   url <- 'https://example.com/data-package.json'
   jsonschema <- helpers.from.json.to.list('inst/profiles/data-package.json')
-  httptest::with_mock_API({
+  httptest::with_mock_api({
     profile <- Profile.load(url)
   })
   expect_equal(profile$name, "data-package")
@@ -92,3 +92,39 @@ test_that('errors for invalid descriptor', {
   valid_errors <- profile$validate(descriptor)
   expect_false(valid_errors$valid)
 })
+
+############################################
+testthat::context('Profile #up-to-date')
+############################################
+
+## method 1 readLines
+foreach(name = 1:length(PROFILES)) %do% {
+  testthat::context(c('Profile #up-to-date - ', PROFILES[[name]]))
+  test_that(stringr::str_interp('profile ${PROFILES[[name]]} should be up-to-date'), {
+    profile <- Profile.load(PROFILES[[name]])
+    response.data <- helpers.from.json.to.list(stringr::str_interp('https://specs.frictionlessdata.io/schemas/${PROFILES[[name]]}.json'))
+    expect_equal(profile$jsonschema, response.data)
+  })
+}
+
+## method 2 httr GET-RESPONSE compare their lengths instead  (this method creates slightly different nests levels but the structure is the same as before)
+foreach(name = 1:length(PROFILES) ) %do% {
+  test_that(stringr::str_interp('profile ${PROFILES[[name]]} should be up-to-date'), {
+    profile <- Profile.load(PROFILES[[name]])
+    response <- httr::GET(stringr::str_interp('https://specs.frictionlessdata.io/schemas/${PROFILES[[name]]}.json')) 
+    response.data <- httr::content(response, as = 'text', encoding = 'UTF-8')
+    
+    foreach(index = 1:length(profile$jsonschema)) %do% {
+      
+      lengths.from.profile <- lapply(profile$jsonschema[index],lengths)
+      lengths.target <- lapply(helpers.from.json.to.list(response.data)[index],lengths)
+      expect_true(identical(lengths.from.profile,lengths.target))
+      
+      foreach(ind = 1:length(profile$jsonschema[index])) %do% {
+        
+        lengths.from.profile <- lapply(profile$jsonschema[index][ind],lengths)
+        lengths.target <- lapply(helpers.from.json.to.list(response.data)[index][ind],lengths)
+        expect_true(identical(lengths.from.profile,lengths.target))
+      }}
+  })
+}
