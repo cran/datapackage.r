@@ -1,9 +1,9 @@
 NEWS
 ================
 
-#### datapackage.r v1.3.3
+#### datapackage.r v1.3.4
 
-change ‘with_mock_api’ to ‘with_mock_API’ from package httptest
+update profiles and httptest::with_mock_api
 
 #### datapackage.r v1.3.3
 
